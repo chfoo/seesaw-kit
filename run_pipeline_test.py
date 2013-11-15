@@ -5,7 +5,7 @@ import sys
 
 class RunPipelineTest(unittest.TestCase):
     def test_example_pipeline(self):
-        if sys.version_info.major == 3:
+        if sys.version_info[0] == 3:
             python_exe = 'python3'
         else:
             python_exe = 'python'
