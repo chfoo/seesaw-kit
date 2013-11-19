@@ -5,7 +5,7 @@
 class Event(object):
     '''Lightweight event system.
 
-    Example:
+    Example::
 
         my_event_system = Event()
         my_event_system = my_listener_callback_function

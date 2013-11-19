@@ -40,7 +40,7 @@ def test_executable(name, version, path, version_arg="-V"):
 def find_executable(name, version, paths, version_arg="-V"):
     '''Returns the path of a matching executable.
 
-    :seealso: :func:`test_executable`
+    .. seealso:: :func:`test_executable`
     '''
     for path in paths:
         if test_executable(name, version, path, version_arg):

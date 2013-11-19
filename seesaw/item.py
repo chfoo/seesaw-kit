@@ -11,10 +11,10 @@ class Item(object):
     '''A thing, or work unit, that needs to be downloaded.
 
     It has properties that are filled by the :class:`Task`.
-    
+
     An Item behaves like a mutable mapping.
-    
-    :note:
+
+    .. note::
         State belonging to a item should be stored on the actual item 
         itself. That is, do not store variables onto a :class:`Task` unless
         you know what you are doing.
