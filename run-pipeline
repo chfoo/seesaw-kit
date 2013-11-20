@@ -30,7 +30,7 @@ def load_pipeline(pipeline_path, context):
 
     project = local_context["project"]
     pipeline = local_context["pipeline"]
-    pineline.project = project
+    pipeline.project = project
     return (project, pipeline)
 
 
