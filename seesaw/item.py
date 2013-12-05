@@ -1,8 +1,8 @@
 '''Managing work units.'''
-import traceback
 import os
 import os.path
 import shutil
+import traceback
 
 from seesaw.event import Event
 
@@ -15,11 +15,15 @@ class Item(object):
     An Item behaves like a mutable mapping.
 
     .. note::
-        State belonging to a item should be stored on the actual item 
+        State belonging to a item should be stored on the actual item
         itself. That is, do not store variables onto a :class:`Task` unless
         you know what you are doing.
     '''
-    def __init__(self, pipeline, item_id, item_number, properties=None, keep_data=False):
+    # Note we can't use collections.MutableMapping because we don't
+    # want some of its semantics, ie __len__ affecting __bool__ or
+    # __eq__ affecting __hash__
+    def __init__(self, pipeline, item_id, item_number, properties=None,
+    keep_data=False):
         self.pipeline = pipeline
         self.item_id = item_id
         self.item_number = item_number
@@ -28,6 +32,7 @@ class Item(object):
 
         self.may_be_canceled = False
         self.canceled = False
+        self.finished = False
         self.completed = False
         self.failed = False
         self._errors = []
@@ -60,7 +65,9 @@ class Item(object):
 
     def log_output(self, data, full_line=True):
         if full_line and len(data) > 0:
-            if data[0] != "\n" and len(self._last_output) > 0 and self._last_output[-1] != "\n":
+            if data[0] != "\n" \
+            and len(self._last_output) > 0 \
+            and self._last_output[-1] != "\n":
                 data = "\n" + data
             if data[-1] != "\n":
                 data = data + "\n"
@@ -102,13 +109,18 @@ class Item(object):
         self.on_finish(self)
 
     def description(self):
-        return "Item %s" % (self.properties["item_name"] if "item_name" in self.properties else "")
+        return "Item {0}".format(self.properties.get("item_name", ""))
 
     def __contains__(self, key):
         return key in self.properties
 
     def __getitem__(self, key):
         return self.properties[key]
+
+    def get(self, key, default=None):
+        if key in self.properties:
+            return self.properties[key]
+        return default
 
     def __setitem__(self, key, value):
         old_value = self.properties[key] if key in self.properties else None
@@ -128,7 +140,8 @@ class Item(object):
             for e in err[1]:
                 # TODO this isn't how exceptions work?
                 if isinstance(e, Exception):
-                    s += "%s\n" % traceback.format_exception(Exception, e, None)
+                    s += "%s\n" % traceback.format_exception(
+                        Exception, e, None)
                 else:
                     s += "%s\n" % str(e)
             s += "\n  " + str(err)
